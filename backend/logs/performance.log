@@ -1,0 +1,9 @@
+2025-08-22 11:18:26 | INFO     | performance               | E:\Programming\projects\webpage-change-checker\backend\app\core\logging.py:267 | test_operation completed successfully
+2025-08-22 11:18:26 | ERROR    | performance               | E:\Programming\projects\webpage-change-checker\backend\app\core\logging.py:278 | failing_operation failed: Something went wrong
+Traceback (most recent call last):
+  File "E:\Programming\projects\webpage-change-checker\backend\app\core\logging.py", line 265, in wrapper
+    result = func(*args, **kwargs)
+  File "E:\Programming\projects\webpage-change-checker\backend\test_logging.py", line 115, in failing_operation
+    raise ValueError("Something went wrong")
+ValueError: Something went wrong
+2025-08-22 11:18:26 | INFO     | performance               | E:\Programming\projects\webpage-change-checker\backend\test_logging.py:177 | Testing logger: performance

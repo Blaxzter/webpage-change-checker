@@ -4,6 +4,13 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app/
 
+# Install system dependencies for Playwright
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install uv
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#installing-uv
 COPY --from=ghcr.io/astral-sh/uv:0.5.11 /uv /uvx /bin/
@@ -39,5 +46,12 @@ COPY ./app /app/app
 # Ref: https://docs.astral.sh/uv/guides/integration/docker/#intermediate-layers
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync
+
+# Install Playwright browsers and dependencies
+RUN uv run playwright install-deps chromium
+RUN uv run playwright install chromium
+
+# Create screenshots directory
+RUN mkdir -p /app/screenshots && chmod 755 /app/screenshots
 
 CMD ["fastapi", "run", "--workers", "4", "app/main.py"]

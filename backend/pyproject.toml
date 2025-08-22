@@ -29,6 +29,10 @@ dependencies = [
     # Force newer httptools version for Python 3.13 compatibility
     "httptools>=0.6.4,<1.0.0",
     "auth0-fastapi-api>=1.0.0b3",
+    # Website monitoring dependencies
+    "playwright>=1.40.0,<2.0.0",
+    # Alternative ASGI server that works better with Playwright on Windows
+    "hypercorn>=0.17.0,<1.0.0",
 ]
 
 [tool.uv]

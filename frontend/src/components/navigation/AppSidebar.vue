@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import {
   AudioWaveform,
+  BarChart3,
+  Bell,
   BookOpen,
   Bot,
   Command,
   Frame,
   GalleryVerticalEnd,
+  Globe,
+  Home,
   Map,
+  Monitor,
   PieChart,
   Settings2,
   SquareTerminal,
@@ -56,21 +61,52 @@ const data = {
   ],
   navMain: [
     {
-      title: 'Playground',
-      url: '#',
-      icon: SquareTerminal,
+      title: 'Overview',
+      routeName: 'home',
+      icon: Home,
       items: [
         {
-          title: 'History',
-          url: '#',
+          title: 'Home',
+          routeName: 'home',
         },
         {
-          title: 'Starred',
-          url: '#',
+          title: 'Dashboard',
+          routeName: 'website-dashboard',
+        },
+      ],
+    },
+    {
+      title: 'Website Monitoring',
+      routeName: 'websites',
+      icon: Monitor,
+      isActive: true,
+      items: [
+        {
+          title: 'Dashboard',
+          routeName: 'website-dashboard',
         },
         {
-          title: 'Settings',
-          url: '#',
+          title: 'All Websites',
+          routeName: 'websites',
+        },
+        {
+          title: 'Add Website',
+          routeName: 'websites',
+        },
+      ],
+    },
+    {
+      title: 'Settings',
+      routeName: 'settings',
+      icon: Settings2,
+      items: [
+        {
+          title: 'Profile',
+          routeName: 'settings',
+        },
+        {
+          title: 'Notifications',
+          routeName: 'notification-settings',
         },
       ],
     },
@@ -78,10 +114,9 @@ const data = {
       title: 'Examples',
       routeName: 'examples',
       icon: Bot,
-      isActive: true,
       items: [
         {
-          title: 'Api Example View',
+          title: 'API Example',
           routeName: 'test',
         },
         {
@@ -91,52 +126,6 @@ const data = {
         {
           title: 'Layout Demo',
           routeName: 'layout-demo',
-        },
-      ],
-    },
-    {
-      title: 'Documentation',
-      url: '#',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Introduction',
-          url: '#',
-        },
-        {
-          title: 'Get Started',
-          url: '#',
-        },
-        {
-          title: 'Tutorials',
-          url: '#',
-        },
-        {
-          title: 'Changelog',
-          url: '#',
-        },
-      ],
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings2,
-      items: [
-        {
-          title: 'General',
-          url: '#',
-        },
-        {
-          title: 'Team',
-          url: '#',
-        },
-        {
-          title: 'Billing',
-          url: '#',
-        },
-        {
-          title: 'Limits',
-          url: '#',
         },
       ],
     },

@@ -1,52 +1,31 @@
 import uuid
 from abc import ABC
 from datetime import datetime, timezone
-
-from sqlalchemy import Column, DateTime, func
-from sqlalchemy.orm import Mapped
+from typing import Optional
 from sqlmodel import Field, SQLModel
 
 
 class Base(SQLModel, ABC):
-    """Abstract base model for all SQLModel models in the application.
+    """Abstract base model for all SQLModel models in the application."""
 
-    This class provides common fields and functionality that should be inherited
-    by all database models. It includes automatic timestamping and sensible
-    defaults for primary keys.
-
-    Attributes:
-        id: Primary key field with auto-increment
-        created_at: Timestamp when the record was created (auto-set on insert)
-        updated_at: Timestamp when the record was last updated (auto-set on insert/update)
-    """
-
-    # Primary key with auto-increment
-    id: Mapped[uuid.UUID] = Field(
+    id: uuid.UUID = Field(
         default_factory=uuid.uuid4,
         primary_key=True,
         description="Unique identifier for the record",
         index=True,
     )
 
-    # Creation timestamp - set once when record is created
-    # Using server_default ensures this is NEVER None and always set by the database
-    created_at: Mapped[datetime] = Field(
-        sa_column=Column(
-            DateTime(timezone=True), server_default=func.now(), nullable=False
-        ),
+    # Let SQLModel handle the column creation automatically
+    created_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
         description="When this record was created",
+        # SQLModel will create the column automatically
     )
 
-    # Update timestamp - automatically updated on any change
-    # Using server_default + onupdate ensures this is NEVER None
-    updated_at: Mapped[datetime] = Field(
-        sa_column=Column(
-            DateTime(timezone=True),
-            server_default=func.now(),
-            onupdate=func.now(),
-            nullable=False,
-        ),
+    updated_at: datetime = Field(
+        default_factory=lambda: datetime.now(timezone.utc),
         description="When this record was last updated",
+        # You'll need to handle updates in your application logic
     )
 
     def __repr__(self) -> str:
@@ -57,21 +36,15 @@ class Base(SQLModel, ABC):
         return f"<{class_name}(new)>"
 
 
-# Alternative base class with soft delete functionality
 class SoftDeleteBase(Base):
-    """Base model with soft delete functionality.
+    """Base model with soft delete functionality."""
 
-    Extends the Base model to include soft delete capability.
-    Records are marked as deleted rather than physically removed.
-    """
-
-    deleted_at: Mapped[datetime | None] = Field(
+    deleted_at: Optional[datetime] = Field(
         default=None,
-        sa_column=Column(DateTime(timezone=True), nullable=True),
         description="When this record was deleted (null if not deleted)",
     )
 
-    is_deleted: Mapped[bool] = Field(
+    is_deleted: bool = Field(
         default=False, description="Whether this record has been soft deleted"
     )
 
@@ -84,23 +57,3 @@ class SoftDeleteBase(Base):
         """Restore a soft-deleted record."""
         self.is_deleted = False
         self.deleted_at = None
-
-
-# Example usage of the enhanced base model
-# class User(Base, table=True):
-#     """Example user model inheriting from Base."""
-
-#     __tablename__ = "users"
-
-#     email: Mapped[str] = Field(
-#         index=True,
-#         unique=True,
-#         description="User's email address"
-#     )
-#     name: Mapped[str] = Field(
-#         description="User's full name"
-#     )
-#     is_active: Mapped[bool] = Field(
-#         default=True,
-#         description="Whether the user account is active"
-#     )

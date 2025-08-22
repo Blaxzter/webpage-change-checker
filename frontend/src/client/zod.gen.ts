@@ -3,6 +3,111 @@
 import { z } from 'zod';
 
 /**
+ * CheckStatus
+ */
+export const zCheckStatus = z.enum([
+    'pending',
+    'success',
+    'failed',
+    'changed'
+]);
+
+/**
+ * CheckTrigger
+ */
+export const zCheckTrigger = z.object({
+    website_ids: z.optional(z.union([
+        z.array(z.uuid()),
+        z.null()
+    ]))
+});
+
+/**
+ * WebsiteStats
+ */
+export const zWebsiteStats = z.object({
+    total_websites: z.int(),
+    active_websites: z.int(),
+    total_checks: z.int(),
+    checks_last_24h: z.int(),
+    websites_with_changes: z.int(),
+    avg_response_time_ms: z.union([
+        z.number(),
+        z.null()
+    ])
+});
+
+/**
+ * WebsiteCheckResponse
+ */
+export const zWebsiteCheckResponse = z.object({
+    status: zCheckStatus,
+    content_hash: z.optional(z.union([
+        z.string(),
+        z.null()
+    ])),
+    screenshot_path: z.optional(z.union([
+        z.string(),
+        z.null()
+    ])),
+    changes_detected: z.optional(z.boolean()).default(false),
+    change_summary: z.optional(z.union([
+        z.string(),
+        z.null()
+    ])),
+    response_time_ms: z.optional(z.union([
+        z.int().gte(0),
+        z.null()
+    ])),
+    error_message: z.optional(z.union([
+        z.string(),
+        z.null()
+    ])),
+    id: z.uuid(),
+    website_id: z.uuid(),
+    created_at: z.iso.datetime()
+});
+
+/**
+ * WebsiteResponse
+ */
+export const zWebsiteResponse = z.object({
+    name: z.string().min(1).max(255).register(z.globalRegistry, {
+        description: 'Website display name'
+    }),
+    url: z.string(),
+    check_interval_minutes: z.optional(z.int().gte(5).lte(10080).register(z.globalRegistry, {
+        description: 'Check interval in minutes (5 min to 1 week)'
+    })).default(60),
+    is_active: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Whether monitoring is active'
+    })).default(true),
+    ignore_selectors: z.optional(z.union([
+        z.array(z.string()),
+        z.null()
+    ])),
+    email_notifications: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Send email notifications'
+    })).default(true),
+    telegram_notifications: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Send Telegram notifications'
+    })).default(false),
+    id: z.uuid(),
+    user_id: z.string(),
+    created_at: z.iso.datetime(),
+    updated_at: z.iso.datetime()
+});
+
+/**
+ * DashboardResponse
+ */
+export const zDashboardResponse = z.object({
+    stats: zWebsiteStats,
+    recent_changes: z.array(zWebsiteCheckResponse),
+    failing_websites: z.array(zWebsiteResponse)
+});
+
+/**
  * ExampleRequest
  */
 export const zExampleRequest = z.object({
@@ -48,6 +153,64 @@ export const zValidationError = z.object({
  */
 export const zHttpValidationError = z.object({
     detail: z.optional(z.array(zValidationError))
+});
+
+/**
+ * NotificationChannel
+ */
+export const zNotificationChannel = z.enum([
+    'email',
+    'telegram'
+]);
+
+/**
+ * NotificationSettingsResponse
+ */
+export const zNotificationSettingsResponse = z.object({
+    email_address: z.optional(z.union([
+        z.email(),
+        z.null()
+    ])),
+    email_enabled: z.optional(z.boolean()).default(true),
+    telegram_chat_id: z.optional(z.union([
+        z.string(),
+        z.null()
+    ])),
+    telegram_enabled: z.optional(z.boolean()).default(false),
+    telegram_bot_token: z.optional(z.union([
+        z.string(),
+        z.null()
+    ])),
+    id: z.uuid(),
+    user_id: z.string(),
+    created_at: z.iso.datetime(),
+    updated_at: z.iso.datetime()
+});
+
+/**
+ * NotificationSettingsUpdate
+ */
+export const zNotificationSettingsUpdate = z.object({
+    email_address: z.optional(z.union([
+        z.email(),
+        z.null()
+    ])),
+    email_enabled: z.optional(z.union([
+        z.boolean(),
+        z.null()
+    ])),
+    telegram_chat_id: z.optional(z.union([
+        z.string(),
+        z.null()
+    ])),
+    telegram_enabled: z.optional(z.union([
+        z.boolean(),
+        z.null()
+    ])),
+    telegram_bot_token: z.optional(z.union([
+        z.string(),
+        z.null()
+    ]))
 });
 
 /**
@@ -103,6 +266,129 @@ export const zUserProfileUpdate = z.object({
     ]))
 });
 
+/**
+ * WebsiteCheckListResponse
+ */
+export const zWebsiteCheckListResponse = z.object({
+    items: z.array(zWebsiteCheckResponse),
+    total: z.int(),
+    page: z.int(),
+    per_page: z.int(),
+    pages: z.int()
+});
+
+/**
+ * WebsiteCreate
+ */
+export const zWebsiteCreate = z.object({
+    name: z.string().min(1).max(255).register(z.globalRegistry, {
+        description: 'Website display name'
+    }),
+    url: z.url().min(1).max(2083).register(z.globalRegistry, {
+        description: 'Website URL to monitor'
+    }),
+    check_interval_minutes: z.optional(z.int().gte(5).lte(10080).register(z.globalRegistry, {
+        description: 'Check interval in minutes (5 min to 1 week)'
+    })).default(60),
+    is_active: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Whether monitoring is active'
+    })).default(true),
+    ignore_selectors: z.optional(z.union([
+        z.array(z.string()),
+        z.null()
+    ])),
+    email_notifications: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Send email notifications'
+    })).default(true),
+    telegram_notifications: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Send Telegram notifications'
+    })).default(false)
+});
+
+/**
+ * WebsiteListResponse
+ */
+export const zWebsiteListResponse = z.object({
+    items: z.array(zWebsiteResponse),
+    total: z.int(),
+    page: z.int(),
+    per_page: z.int(),
+    pages: z.int()
+});
+
+/**
+ * WebsiteUpdate
+ */
+export const zWebsiteUpdate = z.object({
+    name: z.optional(z.union([
+        z.string().min(1).max(255),
+        z.null()
+    ])),
+    url: z.optional(z.union([
+        z.url().min(1).max(2083),
+        z.null()
+    ])),
+    check_interval_minutes: z.optional(z.union([
+        z.int().gte(5).lte(10080),
+        z.null()
+    ])),
+    is_active: z.optional(z.union([
+        z.boolean(),
+        z.null()
+    ])),
+    ignore_selectors: z.optional(z.union([
+        z.array(z.string()),
+        z.null()
+    ])),
+    email_notifications: z.optional(z.union([
+        z.boolean(),
+        z.null()
+    ])),
+    telegram_notifications: z.optional(z.union([
+        z.boolean(),
+        z.null()
+    ]))
+});
+
+/**
+ * WebsiteWithChecks
+ */
+export const zWebsiteWithChecks = z.object({
+    name: z.string().min(1).max(255).register(z.globalRegistry, {
+        description: 'Website display name'
+    }),
+    url: z.string(),
+    check_interval_minutes: z.optional(z.int().gte(5).lte(10080).register(z.globalRegistry, {
+        description: 'Check interval in minutes (5 min to 1 week)'
+    })).default(60),
+    is_active: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Whether monitoring is active'
+    })).default(true),
+    ignore_selectors: z.optional(z.union([
+        z.array(z.string()),
+        z.null()
+    ])),
+    email_notifications: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Send email notifications'
+    })).default(true),
+    telegram_notifications: z.optional(z.boolean().register(z.globalRegistry, {
+        description: 'Send Telegram notifications'
+    })).default(false),
+    id: z.uuid(),
+    user_id: z.string(),
+    created_at: z.iso.datetime(),
+    updated_at: z.iso.datetime(),
+    recent_checks: z.optional(z.array(zWebsiteCheckResponse)),
+    last_check_at: z.optional(z.union([
+        z.iso.datetime(),
+        z.null()
+    ])),
+    last_change_at: z.optional(z.union([
+        z.iso.datetime(),
+        z.null()
+    ]))
+});
+
 export const zHttpException = z.object({
     detail: z.string()
 });
@@ -151,5 +437,155 @@ export const zUsersGetAuth0ManagementUrlData = z.object({
  * Successful Response
  */
 export const zUsersGetAuth0ManagementUrlResponse = z.object({}).register(z.globalRegistry, {
+    description: 'Successful Response'
+});
+
+export const zWebsitesGetWebsitesData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.object({
+        skip: z.optional(z.int().gte(0)).default(0),
+        limit: z.optional(z.int().gte(1).lte(100)).default(50)
+    }))
+});
+
+/**
+ * Successful Response
+ */
+export const zWebsitesGetWebsitesResponse = zWebsiteListResponse;
+
+export const zWebsitesCreateWebsiteData = z.object({
+    body: zWebsiteCreate,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+/**
+ * Successful Response
+ */
+export const zWebsitesCreateWebsiteResponse = zWebsiteResponse;
+
+export const zWebsitesDeleteWebsiteData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        website_id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Response Websites-Delete Website
+ * Successful Response
+ */
+export const zWebsitesDeleteWebsiteResponse = z.object({}).register(z.globalRegistry, {
+    description: 'Successful Response'
+});
+
+export const zWebsitesGetWebsiteData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        website_id: z.uuid()
+    }),
+    query: z.optional(z.object({
+        include_checks: z.optional(z.int().gte(0).lte(50).register(z.globalRegistry, {
+            description: 'Number of recent checks to include'
+        })).default(10)
+    }))
+});
+
+/**
+ * Successful Response
+ */
+export const zWebsitesGetWebsiteResponse = zWebsiteWithChecks;
+
+export const zWebsitesUpdateWebsiteData = z.object({
+    body: zWebsiteUpdate,
+    path: z.object({
+        website_id: z.uuid()
+    }),
+    query: z.optional(z.never())
+});
+
+/**
+ * Successful Response
+ */
+export const zWebsitesUpdateWebsiteResponse = zWebsiteResponse;
+
+export const zWebsitesGetWebsiteChecksData = z.object({
+    body: z.optional(z.never()),
+    path: z.object({
+        website_id: z.uuid()
+    }),
+    query: z.optional(z.object({
+        skip: z.optional(z.int().gte(0)).default(0),
+        limit: z.optional(z.int().gte(1).lte(100)).default(50)
+    }))
+});
+
+/**
+ * Successful Response
+ */
+export const zWebsitesGetWebsiteChecksResponse = zWebsiteCheckListResponse;
+
+export const zWebsitesTriggerWebsiteCheckData = z.object({
+    body: zCheckTrigger,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+/**
+ * Response Websites-Trigger Website Check
+ * Successful Response
+ */
+export const zWebsitesTriggerWebsiteCheckResponse = z.object({}).register(z.globalRegistry, {
+    description: 'Successful Response'
+});
+
+export const zWebsitesGetDashboardStatsData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+/**
+ * Successful Response
+ */
+export const zWebsitesGetDashboardStatsResponse = zDashboardResponse;
+
+export const zWebsitesGetNotificationSettingsData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+/**
+ * Successful Response
+ */
+export const zWebsitesGetNotificationSettingsResponse = zNotificationSettingsResponse;
+
+export const zWebsitesUpdateNotificationSettingsData = z.object({
+    body: zNotificationSettingsUpdate,
+    path: z.optional(z.never()),
+    query: z.optional(z.never())
+});
+
+/**
+ * Successful Response
+ */
+export const zWebsitesUpdateNotificationSettingsResponse = zNotificationSettingsResponse;
+
+export const zWebsitesTestNotificationData = z.object({
+    body: z.optional(z.never()),
+    path: z.optional(z.never()),
+    query: z.object({
+        channel: zNotificationChannel
+    })
+});
+
+/**
+ * Response Websites-Test Notification
+ * Successful Response
+ */
+export const zWebsitesTestNotificationResponse = z.object({}).register(z.globalRegistry, {
     description: 'Successful Response'
 });

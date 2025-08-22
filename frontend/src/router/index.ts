@@ -42,10 +42,7 @@ const router = createRouter({
         {
           path: 'home',
           name: 'home',
-          component: () => import('@/views/HomeView.vue'),
-          meta: {
-            breadcrumbs: [{ title: 'Home' }],
-          },
+          redirect: { name: 'website-dashboard' },
         },
         {
           path: 'examples',
@@ -60,7 +57,11 @@ const router = createRouter({
           name: 'test',
           component: () => import('@/views/examples/ApiExampleView.vue'),
           meta: {
-            breadcrumbs: [{ title: 'Home', to: { name: 'home' } }, { title: 'Examples', to: { name: 'examples' } }, { title: 'API Example' }],
+            breadcrumbs: [
+              { title: 'Home', to: { name: 'home' } },
+              { title: 'Examples', to: { name: 'examples' } },
+              { title: 'API Example' },
+            ],
           },
         },
         {
@@ -71,12 +72,53 @@ const router = createRouter({
             breadcrumbs: [{ title: 'Home', to: { name: 'home' } }, { title: 'Settings' }],
           },
         },
+        // Website Monitoring Routes
+        {
+          path: 'dashboard',
+          name: 'website-dashboard',
+          component: () => import('@/views/WebsiteDashboardView.vue'),
+          meta: {
+            breadcrumbs: [{ title: 'Home', to: { name: 'home' } }, { title: 'Dashboard' }],
+          },
+        },
+        {
+          path: 'websites',
+          name: 'websites',
+          component: () => import('@/views/WebsitesManagementView.vue'),
+          meta: {
+            breadcrumbs: [{ title: 'Home', to: { name: 'home' } }, { title: 'Websites' }],
+          },
+        },
+        {
+          path: 'websites/:id',
+          name: 'website-detail',
+          component: () => import('@/views/WebsiteDetailView.vue'),
+          meta: {
+            breadcrumbs: [
+              { title: 'Home', to: { name: 'home' } },
+              { title: 'Websites', to: { name: 'websites' } },
+              { title: 'Website Details' },
+            ],
+          },
+        },
+        {
+          path: 'notifications',
+          name: 'notification-settings',
+          component: () => import('@/views/NotificationSettingsView.vue'),
+          meta: {
+            breadcrumbs: [{ title: 'Home', to: { name: 'home' } }, { title: 'Notifications' }],
+          },
+        },
         {
           path: 'breadcrumb-examples',
           name: 'breadcrumb-examples',
           component: () => import('@/views/examples/BreadcrumbExamplesView.vue'),
           meta: {
-            breadcrumbs: [{ title: 'Home', to: { name: 'home' } }, { title: 'Examples', to: { name: 'examples' } }, { title: 'Breadcrumb Examples' }],
+            breadcrumbs: [
+              { title: 'Home', to: { name: 'home' } },
+              { title: 'Examples', to: { name: 'examples' } },
+              { title: 'Breadcrumb Examples' },
+            ],
           },
         },
         {
@@ -84,7 +126,11 @@ const router = createRouter({
           name: 'layout-demo',
           component: () => import('@/views/examples/LayoutDemoView.vue'),
           meta: {
-            breadcrumbs: [{ title: 'Home', to: { name: 'home' } }, { title: 'Examples', to: { name: 'examples' } }, { title: 'Layout Demo' }],
+            breadcrumbs: [
+              { title: 'Home', to: { name: 'home' } },
+              { title: 'Examples', to: { name: 'examples' } },
+              { title: 'Layout Demo' },
+            ],
           },
         },
       ],

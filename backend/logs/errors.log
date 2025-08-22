@@ -1,0 +1,93 @@
+2025-08-22 11:18:26 | ERROR    | __main__                  | E:\Programming\projects\webpage-change-checker\backend\test_logging.py:34 | This is an error message
+2025-08-22 11:18:26 | CRITICAL | __main__                  | E:\Programming\projects\webpage-change-checker\backend\test_logging.py:35 | This is a critical message
+2025-08-22 11:18:26 | ERROR    | __main__                  | E:\Programming\projects\webpage-change-checker\backend\test_logging.py:68 | Database connection failed
+2025-08-22 11:18:26 | ERROR    | performance               | E:\Programming\projects\webpage-change-checker\backend\app\core\logging.py:278 | failing_operation failed: Something went wrong
+Traceback (most recent call last):
+  File "E:\Programming\projects\webpage-change-checker\backend\app\core\logging.py", line 265, in wrapper
+    result = func(*args, **kwargs)
+  File "E:\Programming\projects\webpage-change-checker\backend\test_logging.py", line 115, in failing_operation
+    raise ValueError("Something went wrong")
+ValueError: Something went wrong
+2025-08-22 11:18:26 | ERROR    | __main__                  | E:\Programming\projects\webpage-change-checker\backend\test_logging.py:150 | Exception occurred during test
+Traceback (most recent call last):
+  File "E:\Programming\projects\webpage-change-checker\backend\test_logging.py", line 143, in outer_function
+    inner_function()
+    ~~~~~~~~~~~~~~^^
+  File "E:\Programming\projects\webpage-change-checker\backend\test_logging.py", line 139, in inner_function
+    raise ValueError("Inner error occurred")
+ValueError: Inner error occurred
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "E:\Programming\projects\webpage-change-checker\backend\test_logging.py", line 147, in test_exception_logging
+    outer_function()
+    ~~~~~~~~~~~~~~^^
+  File "E:\Programming\projects\webpage-change-checker\backend\test_logging.py", line 145, in outer_function
+    raise RuntimeError("Outer error occurred") from e
+RuntimeError: Outer error occurred
+2025-08-22 11:45:47 | ERROR    | app.monitoring            | E:\Programming\projects\webpage-change-checker\backend\app\main.py:64 | Failed to start monitoring service
+Traceback (most recent call last):
+  File "E:\Programming\projects\webpage-change-checker\backend\app\main.py", line 52, in lifespan
+    from app.logic.website_checker import WebsiteMonitorService
+  File "E:\Programming\projects\webpage-change-checker\backend\app\logic\website_checker.py", line 20, in <module>
+    from app.core.db import get_db
+ImportError: cannot import name 'get_db' from 'app.core.db' (E:\Programming\projects\webpage-change-checker\backend\app\core\db.py)
+2025-08-22 11:46:34 | ERROR    | asyncio                   | C:\Users\mail\AppData\Roaming\uv\python\cpython-3.13.0-windows-x86_64-none\Lib\asyncio\base_events.py:1858 | Task exception was never retrieved
+future: <Task finished name='Task-4' coro=<Connection.run() done, defined at e:\Programming\projects\webpage-change-checker\backend\.venv\Lib\site-packages\playwright\_impl\_connection.py:303> exception=NotImplementedError()>
+Traceback (most recent call last):
+  File "e:\Programming\projects\webpage-change-checker\backend\.venv\Lib\site-packages\playwright\_impl\_connection.py", line 310, in run
+    await self._transport.connect()
+  File "e:\Programming\projects\webpage-change-checker\backend\.venv\Lib\site-packages\playwright\_impl\_transport.py", line 133, in connect
+    raise exc
+  File "e:\Programming\projects\webpage-change-checker\backend\.venv\Lib\site-packages\playwright\_impl\_transport.py", line 120, in connect
+    self._proc = await asyncio.create_subprocess_exec(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\mail\AppData\Roaming\uv\python\cpython-3.13.0-windows-x86_64-none\Lib\asyncio\subprocess.py", line 224, in create_subprocess_exec
+    transport, protocol = await loop.subprocess_exec(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        stderr=stderr, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mail\AppData\Roaming\uv\python\cpython-3.13.0-windows-x86_64-none\Lib\asyncio\base_events.py", line 1781, in subprocess_exec
+    transport = await self._make_subprocess_transport(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        protocol, popen_args, False, stdin, stdout, stderr,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        bufsize, **kwargs)
+        ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mail\AppData\Roaming\uv\python\cpython-3.13.0-windows-x86_64-none\Lib\asyncio\base_events.py", line 535, in _make_subprocess_transport
+    raise NotImplementedError
+NotImplementedError
+2025-08-22 11:47:36 | ERROR    | asyncio                   | C:\Users\mail\AppData\Roaming\uv\python\cpython-3.13.0-windows-x86_64-none\Lib\asyncio\base_events.py:1858 | Task exception was never retrieved
+future: <Task finished name='Task-4' coro=<Connection.run() done, defined at e:\Programming\projects\webpage-change-checker\backend\.venv\Lib\site-packages\playwright\_impl\_connection.py:303> exception=NotImplementedError()>
+Traceback (most recent call last):
+  File "e:\Programming\projects\webpage-change-checker\backend\.venv\Lib\site-packages\playwright\_impl\_connection.py", line 310, in run
+    await self._transport.connect()
+  File "e:\Programming\projects\webpage-change-checker\backend\.venv\Lib\site-packages\playwright\_impl\_transport.py", line 133, in connect
+    raise exc
+  File "e:\Programming\projects\webpage-change-checker\backend\.venv\Lib\site-packages\playwright\_impl\_transport.py", line 120, in connect
+    self._proc = await asyncio.create_subprocess_exec(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+    )
+    ^
+  File "C:\Users\mail\AppData\Roaming\uv\python\cpython-3.13.0-windows-x86_64-none\Lib\asyncio\subprocess.py", line 224, in create_subprocess_exec
+    transport, protocol = await loop.subprocess_exec(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        stderr=stderr, **kwds)
+        ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mail\AppData\Roaming\uv\python\cpython-3.13.0-windows-x86_64-none\Lib\asyncio\base_events.py", line 1781, in subprocess_exec
+    transport = await self._make_subprocess_transport(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        protocol, popen_args, False, stdin, stdout, stderr,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        bufsize, **kwargs)
+        ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\mail\AppData\Roaming\uv\python\cpython-3.13.0-windows-x86_64-none\Lib\asyncio\base_events.py", line 535, in _make_subprocess_transport
+    raise NotImplementedError
+NotImplementedError

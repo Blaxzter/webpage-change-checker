@@ -9,9 +9,22 @@ from sqlmodel import SQLModel
 from .base import Base  # Import the Base model for common fields and functionality
 
 # Import all your models here so they are registered with SQLModel
-# Example:
-# from .user import User
+from .website import (
+    Website,
+    WebsiteCheck,
+    NotificationLog,
+    UserNotificationSettings,
+    NotificationChannel,
+    CheckStatus,
+)
 
-# from .item import Item
-
-__all__ = ["SQLModel", "Base"]  # Add all your models to this list for easier imports
+__all__ = [
+    "SQLModel",
+    "Base",
+    "Website",
+    "WebsiteCheck",
+    "NotificationLog",
+    "UserNotificationSettings",
+    "NotificationChannel",
+    "CheckStatus",
+]
