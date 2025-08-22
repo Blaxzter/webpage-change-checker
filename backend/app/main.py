@@ -208,49 +208,11 @@ async def logging_middleware(request: Request, call_next):
 
 
 if __name__ == "__main__":
-    import sys
-    import platform
+    import uvicorn
 
-    # On Windows, use hypercorn or fix event loop for uvicorn compatibility with Playwright
-    if platform.system() == "Windows":
-        # Option 1: Use hypercorn (recommended for Playwright compatibility)
-        if (
-            "--hypercorn" in sys.argv
-            or os.getenv("USE_HYPERCORN", "false").lower() == "true"
-        ):
-            import hypercorn.asyncio
-            import hypercorn.config
-
-            config = hypercorn.config.Config()
-            config.bind = ["0.0.0.0:8000"]
-            config.reload = True
-
-            print("🚀 Starting server with hypercorn (Windows + Playwright compatible)")
-            asyncio.run(hypercorn.asyncio.serve(app, config))
-        else:
-            # Option 2: Fix uvicorn event loop for Windows
-            import uvicorn
-
-            # Set Windows event loop policy for Playwright compatibility
-            if hasattr(asyncio, "WindowsProactorEventLoopPolicy"):
-                asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-
-            print("🚀 Starting server with uvicorn (Windows event loop fixed)")
-            uvicorn.run(
-                "app.main:app",
-                host="localhost",
-                port=8000,
-                reload=True,
-                loop="asyncio",  # Use asyncio event loop explicitly
-            )
-    else:
-        # On Linux/Mac, uvicorn works fine
-        import uvicorn
-
-        print("🚀 Starting server with uvicorn")
-        uvicorn.run(
-            "app.main:app",
-            host="localhost",
-            port=8000,
-            reload=True,
-        )
+    uvicorn.run(
+        "app.main:app",
+        host="localhost",
+        port=8000,
+        reload=True,
+    )

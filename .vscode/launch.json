@@ -26,39 +26,11 @@
       "name": "Backend",
       "type": "debugpy",
       "request": "launch",
-      "module": "app.main",
-      "args": [],
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload"],
       "cwd": "${workspaceFolder}/backend",
       "jinja": true,
       "envFile": "${workspaceFolder}/.env",
-      "justMyCode": false
-    },
-    {
-      "name": "Backend (Hypercorn)",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "app.main",
-      "args": ["--hypercorn"],
-      "cwd": "${workspaceFolder}/backend",
-      "jinja": true,
-      "envFile": "${workspaceFolder}/.env",
-      "env": {
-        "USE_HYPERCORN": "true"
-      },
-      "justMyCode": false
-    },
-    {
-      "name": "Backend (with Monitoring)",
-      "type": "debugpy",
-      "request": "launch",
-      "module": "app.main",
-      "args": [],
-      "cwd": "${workspaceFolder}/backend",
-      "jinja": true,
-      "envFile": "${workspaceFolder}/.env",
-      "env": {
-        "ENABLE_MONITORING": "true"
-      },
       "justMyCode": false
     },
     {
