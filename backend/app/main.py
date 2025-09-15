@@ -14,11 +14,6 @@ from app.api.api import api_router
 from app.core.config import settings
 
 
-# Global variables to hold the monitoring service and task
-monitoring_service = None
-monitoring_task = None
-
-
 def custom_generate_unique_id(route: APIRoute) -> str:
     return f"{route.tags[0]}-{route.name}"
 
@@ -26,24 +21,19 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """FastAPI lifespan event handler to manage monitoring service"""
-    global monitoring_service, monitoring_task
-
     # Check if monitoring should be enabled
     enable_monitoring = os.getenv("ENABLE_MONITORING", "false").lower() == "true"
 
     if enable_monitoring:
-        print("🔍 Starting Website Monitoring Service...")
+        print("🔍 Starting Website Monitoring Service (Threaded)...")
         try:
-            from app.logic.website_checker import WebsiteMonitorService
+            from app.logic.threaded_monitor import threaded_monitor_service
 
-            monitoring_service = WebsiteMonitorService(check_interval_seconds=60)
-
-            # Start monitoring in background task
-            monitoring_task = asyncio.create_task(monitoring_service.start())
+            # Start monitoring in a separate thread
+            threaded_monitor_service.start()
             print("✅ Website Monitoring Service started")
         except Exception as e:
             print(f"❌ Failed to start monitoring service: {e}")
-            monitoring_service = None
     else:
         print(
             "ℹ️  Website Monitoring Service disabled (set ENABLE_MONITORING=true to enable)"
@@ -52,21 +42,15 @@ async def lifespan(app: FastAPI):
     yield  # Application runs here
 
     # Cleanup
-    if monitoring_service:
+    if enable_monitoring:
         print("🛑 Stopping Website Monitoring Service...")
         try:
-            await monitoring_service.stop()
+            from app.logic.threaded_monitor import threaded_monitor_service
+
+            threaded_monitor_service.stop()
             print("✅ Website Monitoring Service stopped")
         except Exception as e:
             print(f"❌ Error stopping monitoring service: {e}")
-
-    if monitoring_task and not monitoring_task.done():
-        print("🛑 Cancelling monitoring task...")
-        monitoring_task.cancel()
-        try:
-            await monitoring_task
-        except asyncio.CancelledError:
-            print("✅ Monitoring task cancelled")
 
 
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":

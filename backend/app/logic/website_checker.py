@@ -36,15 +36,42 @@ class WebsiteChecker:
         """Start the Playwright browser instance."""
         if self.browser is None:
             playwright = await async_playwright().start()
-            self.browser = await playwright.chromium.launch(
-                headless=True,
-                args=[
-                    "--no-sandbox",
-                    "--disable-dev-shm-usage",
-                    "--disable-web-security",
-                    "--disable-features=VizDisplayCompositor",
-                ],
-            )
+
+            # Windows-specific browser launch options to avoid subprocess issues
+            import sys
+
+            if sys.platform == "win32":
+                self.browser = await playwright.chromium.launch(
+                    headless=True,
+                    args=[
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-web-security",
+                        "--disable-features=VizDisplayCompositor",
+                        "--disable-background-timer-throttling",
+                        "--disable-backgrounding-occluded-windows",
+                        "--disable-renderer-backgrounding",
+                        "--disable-extensions",
+                        "--disable-plugins",
+                        "--disable-default-apps",
+                        "--no-first-run",
+                        "--no-default-browser-check",
+                        "--disable-gpu",
+                        "--single-process",  # This might help avoid subprocess issues
+                    ],
+                    # Try using a specific executable path if available
+                    channel="chrome",  # Use system Chrome if available
+                )
+            else:
+                self.browser = await playwright.chromium.launch(
+                    headless=True,
+                    args=[
+                        "--no-sandbox",
+                        "--disable-dev-shm-usage",
+                        "--disable-web-security",
+                        "--disable-features=VizDisplayCompositor",
+                    ],
+                )
 
     async def stop_browser(self):
         """Stop the Playwright browser instance."""

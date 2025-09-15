@@ -1,0 +1,32 @@
+# docker-compose.monitoring.yml
+# Additional service to run the monitoring daemon separately
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.monitoring.yml up
+
+version: "3.8"
+
+services:
+  monitoring:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webpage-monitoring
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - ENABLE_MONITORING=true
+      - PYTHONPATH=/app
+    volumes:
+      - ./screenshots:/app/screenshots
+      - ./logs:/app/logs
+    command: python -m app.logic.monitoring_daemon
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    labels:
+      - traefik.enable=false # This service doesn't need web exposure
+
+networks:
+  traefik-public:
+    external: true
+
