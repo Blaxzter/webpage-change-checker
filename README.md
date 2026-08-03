@@ -1,5 +1,69 @@
 # Full Stack FastAPI Template
 
+> ## ⚠️ Status: Website-Monitoring hier ist unfertig und läuft nicht
+>
+> Dieses Repo war der erste Anlauf für einen Webseiten-Änderungs-Watcher, aufgesetzt
+> auf dem FastAPI/Vue-Template. **Das Monitoring funktioniert nicht.** Die
+> lauffähige Umsetzung lebt seit dem 02.08.2026 in einem eigenen Repo:
+>
+> ### → [github.com/Blaxzter/webwatcher](https://github.com/Blaxzter/webwatcher)
+>
+> Eigenständiges Python-Paket, Playwright + SQLite + Telegram, ohne Postgres und
+> ohne Frontend. Läuft per Docker Compose oder systemd auf einem kleinen Server.
+>
+> ### Was hier konkret kaputt ist
+>
+> **1. Jede Prüfung stürzt sofort ab.** In `backend/app/logic/website_checker.py:101`
+> (und an 12 weiteren Stellen):
+>
+> ```python
+> start_time = datetime.now(datetime.timezone.utc)
+> # AttributeError: type object 'datetime.datetime' has no attribute 'timezone'
+> ```
+>
+> `datetime` ist hier die Klasse, nicht das Modul — richtig wäre
+> `datetime.now(timezone.utc)`. Die Zeile steht *vor* dem `try`, der Aufrufer fängt
+> alles ab und schreibt es als „failed check" in die Datenbank. Es kracht also nicht
+> sichtbar, sondern scheitert still bei jeder Prüfung, für immer. Der Browser wird
+> nie gestartet.
+>
+> **2. Sechs parallele Monitoring-Implementierungen** in `backend/app/logic/`
+> (1642 Zeilen), keine davon getestet:
+>
+> | Datei | Zeilen | |
+> | --- | --- | --- |
+> | `website_checker.py` | 403 | wird über `threaded_monitor` gestartet, crasht |
+> | `notification_service.py` | 347 | nur SMTP, kein Telegram |
+> | `simple_website_checker.py` | 293 | Zweitfassung, gleicher Bug |
+> | `adaptive_threaded_monitor.py` | 175 | |
+> | `adaptive_monitoring_daemon.py` | 149 | |
+> | `threaded_monitor.py` | 111 | |
+> | `monitoring_daemon.py` | 88 | |
+> | `background_service.py` | 76 | |
+>
+> Vier Daemon-Varianten und zwei Checker nebeneinander — typisches Muster für Code,
+> der geschrieben, aber nie ausgeführt wurde. Ein `AttributeError` in Zeile 101 wäre
+> beim ersten Start aufgefallen.
+>
+> **3. Benachrichtigung nur per SMTP.** Telegram, Screenshots im Diff und
+> CSS-Klassen-Erkennung (nötig für Seiten, die ihren Zustand nur im
+> `class`-Attribut kodieren) gibt es hier nicht.
+>
+> ### Was brauchbar ist
+>
+> Modelle (`app/models/website.py`), Schemas, CRUD und die Alembic-Migration sind
+> ordentlich, ebenso die Vue-Views (`WebsiteDashboardView`, `WebsiteDetailView`,
+> `components/website/`). Kaputt ist die Ausführungsschicht, nicht der Entwurf.
+>
+> ### Falls hier doch mal eine Weboberfläche entstehen soll
+>
+> Nicht den Code in `logic/` reanimieren, sondern `webwatcher` als Paket
+> importieren: `browser.py`, `compare.py` und `store.py` dort sind bewusst frei von
+> Framework-Abhängigkeiten. Die acht Dateien in `backend/app/logic/` können dann
+> ersatzlos weg.
+
+
+
 <a href="https://github.com/fastapi/full-stack-fastapi-template/actions?query=workflow%3ATest" target="_blank"><img src="https://github.com/fastapi/full-stack-fastapi-template/workflows/Test/badge.svg" alt="Test"></a>
 <a href="https://coverage-badge.samuelcolvin.workers.dev/redirect/fastapi/full-stack-fastapi-template" target="_blank"><img src="https://coverage-badge.samuelcolvin.workers.dev/fastapi/full-stack-fastapi-template.svg" alt="Coverage"></a>
 
